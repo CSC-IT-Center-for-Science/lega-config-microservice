@@ -135,7 +135,7 @@
 					<dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
 					<verbose>false</verbose>
 					<useNativeGit>false</useNativeGit>
-					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+					<dotGitDirectory>${session.executionRootDirectory}/.git</dotGitDirectory>
 					<skipPoms>true</skipPoms>
 					<generateGitPropertiesFile>true</generateGitPropertiesFile>
 					<generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
@@ -143,7 +143,7 @@
 					<abbrevLength>7</abbrevLength>
 					<skip>false</skip>
 					<excludeProperties>
-						<!-- <excludeProperty>git.user.*</excludeProperty> -->
+						<!-- <excludeProperty>git.user.*</excludeProperty> --> 
 					</excludeProperties>
 					<gitDescribe>
 						<skip>false</skip>
@@ -153,7 +153,7 @@
 						<forceLongFormat>false</forceLongFormat>
 					</gitDescribe>
 				</configuration>
-			</plugin>
+			</plugin> 
 			<plugin>
 				<groupId>org.apache.servicemix.tooling</groupId>
 				<artifactId>depends-maven-plugin</artifactId>
@@ -167,6 +167,32 @@
 					</execution>
 				</executions>
 			</plugin>
+                        <plugin>
+                                <groupId>com.spotify</groupId>
+                                <artifactId>docker-maven-plugin</artifactId>
+                                <version>0.4.11</version>
+                                <configuration>
+                                        <imageName>lega/config-microservice</imageName>
+                                        <baseImage>java:8</baseImage>
+                                        <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                                        <resources>
+                                                <resource>
+                                                        <targetPath>/</targetPath>
+                                                        <directory>${project.build.directory}</directory>
+                                                        <include>${project.build.finalName}.jar</include>
+                                                </resource>
+                                        </resources>
+                                </configuration>
+                                <executions>
+                                    <execution>
+                                        <id>build-image</id>
+                                        <phase>package</phase>
+                                        <goals>
+                                            <goal>build</goal>
+                                        </goals>
+                                    </execution>
+                                </executions>
+                        </plugin>
 		</plugins>
 	</build>
 
